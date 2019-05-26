@@ -113,14 +113,14 @@ module.exports.process = function (message) {
     else message.channel.send(`You need Kick Members and Ban Members permissions to use this command.`);
 }
 
-function logging(message, server, pardon_member, text) {
+function logging(message, server, warn_member, text) {
     if (server.logchannelId != "0") message.guild.channels.get(server.logchannelId).send(
         new Discord.RichEmbed()
             .setTitle('Member Warned')
             .setColor('RED')
             .addField('Username', warn_member.user.tag)
             .addField('Joined Time', warn_member.joinedAt)
-            .addField('Reason', 'no reason')
+            .addField('Reason', text)
             .setAuthor(warn_member.displayName, warn_member.displayAvatarURL)
     );
 }
