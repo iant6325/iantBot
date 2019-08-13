@@ -11,7 +11,9 @@ const commands = [];
  */
 module.exports = function (Client) {
     Client.on('message', message => {
+        if (message.channel.type == 'dm') return;
         serversettingsModel.findOne({ serverId: message.guild.id }).then(server => {
+            const webhook = new Discord.WebhookClient(server.webhookid, server.webhooktoken);
             if (server.translateId == "0") return 0;
 
             if (message.author.bot) return;
@@ -22,12 +24,11 @@ module.exports = function (Client) {
                 translate(message.content, { to: server.translatelang }).then(res => {
                     if (res.from.language.iso == server.translatelang) return;
 
-                    Client.channels.get(server.translateId).send(
-                        new Discord.RichEmbed()
-                            .setDescription(res.text)
-                            .setAuthor(message.member.displayName, message.author.displayAvatarURL)
-                    );
-                })
+                    webhook.send(res.text, {
+                        username: message.member.displayName,
+                        avatarURL: message.author.displayAvatarURL
+                        });
+                    });
             } 
         });
     });

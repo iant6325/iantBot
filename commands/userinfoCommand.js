@@ -15,7 +15,7 @@ module.exports.process = function (message) {
                     return send_userinfo(message, message.member, user.warn, user.description)
                 }
                 else {
-                    return send_userinfo(message, message.member, 0, 'Set your description using i!setdescription')
+                    return send_userinfo(message, message.member, 0, 'Set your description using $setdescription')
                 }
             });
         }
@@ -26,7 +26,7 @@ module.exports.process = function (message) {
                     return send_userinfo(message, target, user.warn, user.description)
                 }
                 else {
-                    return send_userinfo(message, target, 0, 'Set your description using i!setdescription')
+                    return send_userinfo(message, target, 0, 'Set your description using $setdescription')
                 }
             });
         }
@@ -36,10 +36,10 @@ module.exports.process = function (message) {
 }
 
 function send_userinfo(message, target, warn, description) {
-    return message.channel.send(
+    return message.channel.send({embed :
         new Discord.RichEmbed()
             .setColor(target.displayHexColor)
-            .setTitle(message.member.displayName + ' Userinfo')
+            .setTitle(target.displayName + ' Userinfo')
             .setDescription(description)
             .setThumbnail(target.user.displayAvatarURL)
             .addField('Roles', target.roles.map(m => m.toString()))
@@ -47,5 +47,6 @@ function send_userinfo(message, target, warn, description) {
             .addField('Created date', target.user.createdAt, true)
             .addField('Warns', warn, true)
             .setTimestamp()
-            .setFooter('Requsted by ' + message.member.displayName, message.author.displayAvatarURL));
+            .setFooter('Requsted by ' + message.member.displayName, message.author.displayAvatarURL)
+    });
 }

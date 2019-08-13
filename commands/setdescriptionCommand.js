@@ -9,7 +9,6 @@ module.exports.alias = "setdescription";
 module.exports.process = function (message) {
     {
         let args = message.content.split(' ');
-        console.log(args[1]);
         if (args[1] == undefined) {
             const filter = m => m.author.id == message.author.id && m.channel.id == message.channel.id
             message.channel.send(`Please write your Description in 30 seconds`);

@@ -6,14 +6,22 @@ const CommandSystem = require('./commandSystem')
 const PersonalCommand = require('./personalCommandSystem')
 const Log = require('./log.js')
 const Translate = require('./translate.js');
-const connection = mongoose.createConnection('mongodb://localhost/iantbot')
+const Grammar = require('./grammar.js');
+const connection = mongoose.createConnection('mongodb+srv://bot:ssj0823@iantbot-xvcql.mongodb.net/test?retryWrites=true&w=majority')
 
 const serversettingsSchema = new mongoose.Schema({
     serverId: String,
+    serverName: String,
     logchannelId: String,
     greetchannelId: String,
     translateId: String,
     translatelang: String,
+    webhookid: String,
+    webhooktoken: String,
+    suggestion: [String],
+    suggmember: [String],
+    suggchannel: String,
+    suggstatus: [String],
 });
 
 const usersSchema = new mongoose.Schema({
@@ -21,18 +29,20 @@ const usersSchema = new mongoose.Schema({
     userId: String,
     warn: Number,
     description: String,
+    credits: Number,
 });
 
 serversettingsModel = connection.model('serversettings', serversettingsSchema);
-usersModel = connection.model('users', usersSchema);
+usersModel = connection.model('rsdusers', usersSchema);
 
 const Client = new discord.Client();
 
 Client.on('ready', () => {
     console.log(`Bot is ready, logged in as '${Client.user.username}#${Client.user.discriminator}'`);
     CommandSystem(Client);
-    PersonalCommand(Client);
+    //PersonalCommand(Client);
     Log(Client);
+    Grammar(Client);
     Translate(Client);
 
     // Oh no! It'S oVeR :(((
@@ -55,10 +65,17 @@ Client.on('ready', () => {
 Client.on("guildCreate", guild => {
     let newServerSettings = {
         serverId: guild.id,
-        logchannelId: 0,
-        greetchannelId: 0,
-        tranlateId: 0,
-        translatelang: 0,
+        serverName: guild.name,
+        logchannelId: '0',
+        greetchannelId: '0',
+        translateId: '0',
+        translatelang: "en",
+        webhookid: '0',
+        webhooktoken: '0',
+        suggchannel: "0",
+        suggestion: [0],
+        suggmember: [0],
+        suggstatus: [0]
     };
     new serversettingsModel(newServerSettings).save(err => {
         if (err) throw err;
